@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fitness Tracker App</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #d4fc79, #96e6a1);
+      margin: 0;
+      padding: 0;
+    }
+
+    .app-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    #clock {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .input-section {
+      margin: 20px 0;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    #progress-fill {
+      height: 20px;
+      width: 0%;
+      background: #28a745;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1>Fitness Tracker</h1>
+    <h2 id="clock"></h2>
+
+    <!-- Data Entry -->
+    <div class="input-section">
+      <h2>Log Activity</h2>
+      <label>Steps: <input type="number" id="steps"></label>
+      <label>Workout (minutes): <input type="number" id="workout"></label>
+      <label>Calories Burned: <input type="number" id="calories"></label>
+      <button id="add-entry">Add Entry</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+      <h2>Daily Summary</h2>
+      <p id="summary-steps">Steps: 0</p>
+      <p id="summary-workout">Workout: 0 min</p>
+      <p id="summary-calories">Calories: 0</p>
+
+      <h2>Weekly Progress</h2>
+      <div class="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let totalSteps = parseInt(localStorage.getItem("steps")) || 0;
+    let totalWorkout = parseInt(localStorage.getItem("workout")) || 0;
+    let totalCalories = parseInt(localStorage.getItem("calories")) || 0;
+
+    const stepsInput = document.getElementById("steps");
+    const workoutInput = document.getElementById("workout");
+    const caloriesInput = document.getElementById("calories");
+    const addEntryButton = document.getElementById("add-entry");
+
+    const summarySteps = document.getElementById("summary-steps");
+    const summaryWorkout = document.getElementById("summary-workout");
+    const summaryCalories = document.getElementById("summary-calories");
+    const progressFill = document.getElementById("progress-fill");
+
+    // Live clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent = now.toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+
+    // Update dashboard
+    function updateDashboard() {
+      summarySteps.textContent = `Steps: ${totalSteps}`;
+      summaryWorkout.textContent = `Workout: ${totalWorkout} min`;
+      summaryCalories.textContent = `Calories: ${totalCalories}`;
+
+      const progress = Math.min((totalSteps / 5000) * 100, 100);
+      progressFill.style.width = progress + "%";
+
+      // Save to localStorage
+      localStorage.setItem("steps", totalSteps);
+      localStorage.setItem("workout", totalWorkout);
+      localStorage.setItem("calories", totalCalories);
+    }
+
+    addEntryButton.addEventListener("click", () => {
+      totalSteps += parseInt(stepsInput.value) || 0;
+      totalWorkout += parseInt(workoutInput.value) || 0;
+      totalCalories += parseInt(caloriesInput.value) || 0;
+
+      updateDashboard();
+
+      stepsInput.value = "";
+      workoutInput.value = "";
+      caloriesInput.value = "";
+    });
+
+    // Initialize
+    updateDashboard();
+    updateClock();
+  </script>
+</body>
+</html>
